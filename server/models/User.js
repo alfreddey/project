@@ -10,10 +10,12 @@ const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, "Please provide your username."],
+    unique: true,
   },
   password: {
     type: String,
     required: [true, "Please provide your password."],
+    maxLength: 256,
   },
   role: {
     type: String,
@@ -28,11 +30,11 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.comparePassword = async function (password) {
-  await bcrypt.compare(password, this.password);
+  return await bcrypt.compare(password, this.password);
 };
 
 UserSchema.pre("save", async function () {
-  this.password = await bcrypt.hash(this.password, bcrypt.genSalt());
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 module.exports = mongoose.model("User", UserSchema);

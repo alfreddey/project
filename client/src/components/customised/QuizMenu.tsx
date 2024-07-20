@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import QuickQuickForm from "@/components/customised/dialogs/QuickQuizForm";
 import CreateQuizForm from "@/components/customised/dialogs/CreateQuizForm";
+import MultiplayerBtn from "./MultiplayerBtn";
 
 function QuizMenu() {
   const [selectedOption, setSelectedOption] = useState("quickQuiz");
@@ -23,7 +24,7 @@ function QuizMenu() {
       case "createQuiz":
         return <CreateQuizForm />;
       case "multiplayerQuiz":
-        return <div>Under construction</div>;
+        return <MultiplayerBtn />;
       default:
         return <QuickQuickForm />;
     }

@@ -5,6 +5,9 @@ import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
 import QuickQuizPage from "./pages/QuickQuizPage";
 import ScorePage from "./pages/ScorePage";
+import RegisterPage from "./pages/RegisterPage";
+import RoomCreationPage from "./pages/RoomCreationPage";
+import WaitingRoomPage from "./pages/WaitingRoomPage";
 
 function App() {
   return (
@@ -12,9 +15,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/quiz_room" element={<QuickQuizPage />} />
           <Route path="/display_score" element={<ScorePage />} />
+          <Route path="/room_creation" element={<RoomCreationPage />} />
+          <Route path="/waiting_room" element={<WaitingRoomPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>

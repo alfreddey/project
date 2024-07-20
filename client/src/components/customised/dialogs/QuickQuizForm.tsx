@@ -43,7 +43,7 @@ export default function QuickQuickForm() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full shadow-lg">Next</Button>
+        <Button className="w-full">Play Quick Quiz</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
