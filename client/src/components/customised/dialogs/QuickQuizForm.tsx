@@ -39,11 +39,16 @@ const formSchema = z.object({
 
 const OpenTriviaAPI_BASE_URL = "https://opentdb.com/api.php";
 
-export default function QuickQuickForm() {
+type QuickQuickFormProp = {
+  className?: string;
+  onClick?: (q: any) => void;
+};
+
+export default function QuickQuickForm(prop: QuickQuickFormProp) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full">Play Quick Quiz</Button>
+        <Button className={`w-full ${prop.className}`}>Play Quick Quiz</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -52,13 +57,13 @@ export default function QuickQuickForm() {
             Select quiz category, type, difficulty levels, among others
           </DialogDescription>
         </DialogHeader>
-        <QuickQuizFormControls />
+        <QuickQuizFormControls {...prop} />
       </DialogContent>
     </Dialog>
   );
 }
 
-function QuickQuizFormControls() {
+function QuickQuizFormControls(prop: QuickQuickFormProp) {
   const { getQuizzes } = useFetch();
   const navigate = useNavigate();
 
@@ -80,11 +85,14 @@ function QuickQuizFormControls() {
 
       const temp = await getQuizzes(OpenTriviaAPI_BASE_URL + query_string);
       const data = { ...temp, time: formData.time };
+      if (prop.onClick) prop?.onClick(data);
 
       // Navigate and send data to quiz room route,
       // where QuickQuizPage is rendered
+      console.log("Quix dat ", data);
       navigate("/quiz_room", {
         state: { data },
+        replace: true,
       });
     } else {
       alert(
@@ -229,7 +237,7 @@ function QuickQuizFormControls() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className={`w-full`}>
           Start
         </Button>
       </form>

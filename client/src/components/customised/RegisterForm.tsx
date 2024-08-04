@@ -76,7 +76,8 @@ function RegisterFormControls() {
     try {
       const result = await axios.post("/register", formData);
       if (result.data.token) {
-        localStorage.setItem("auth_token", result.data.token);
+        sessionStorage.setItem("auth_token", result.data.token);
+        sessionStorage.setItem("username", formData.username);
         axios.defaults.headers.common["Authorization"] =
           "Bearer " + result.data.token;
         navigate("/home", { replace: true });

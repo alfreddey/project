@@ -7,6 +7,7 @@ import QuickQuizPage from "./pages/QuickQuizPage";
 import ScorePage from "./pages/ScorePage";
 import RegisterPage from "./pages/RegisterPage";
 import RoomCreationPage from "./pages/RoomCreationPage";
+import AdminWaitingRoomPage from "./pages/AdminWaitingRoomPage";
 import WaitingRoomPage from "./pages/WaitingRoomPage";
 
 function App() {
@@ -20,6 +21,10 @@ function App() {
           <Route path="/quiz_room" element={<QuickQuizPage />} />
           <Route path="/display_score" element={<ScorePage />} />
           <Route path="/room_creation" element={<RoomCreationPage />} />
+          <Route
+            path="/admin_waiting_room"
+            element={<AdminWaitingRoomPage />}
+          />
           <Route path="/waiting_room" element={<WaitingRoomPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>

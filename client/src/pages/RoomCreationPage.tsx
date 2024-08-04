@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -17,16 +16,21 @@ import { useState } from "react";
 function RoomCreationPage() {
   const [room_name, setRoomName] = useState("");
   const navigate = useNavigate();
-  const handleCreateBtn = (userInfo: any) => {
-    // establishes a websocket connection with the
-    // server, emits a create_room event and
-    // navigates to the waiting room page
-    // ELSE returns an error message
+  const handleCreateBtn = () => {
+    const username = sessionStorage.getItem("username");
+    // userInfo.username = sessionStorage.getItem("username");
+
+    // // establishes a websocket connection with the
+    // // server, emits a create_room event and
+    // // navigates to the waiting room page
+    // // ELSE returns an error message
     try {
       socket.connect();
-      socket.emit("create_room", userInfo);
+      socket.emit("create_room", username);
       socket.on("goto_waiting_room", () =>
-        navigate("/waiting_room", { replace: false })
+        navigate("/admin_waiting_room", {
+          replace: true,
+        })
       );
     } catch (err: any) {
       console.log(err.message);
@@ -34,25 +38,28 @@ function RoomCreationPage() {
     }
   };
 
-  const handleJoinDialog = async (roomInfo: any) => {
+  const handleJoinDialog = async (roomname: any) => {
+    const username = sessionStorage.getItem("username");
     // establishes a connection with the server
     // emits a join_room event
     // navigates to the waiting room page
     // ELSE returns an error message
     try {
       socket.connect();
-      socket.emit("join_room", roomInfo);
+      socket.emit("join_room", roomname, username);
       socket.on("error", (msg) => {
         console.log(msg);
       });
-      socket.on("goto_waiting_room", () =>
-        navigate("/waiting_room", { replace: false })
-      );
+      socket.on("goto_waiting_room", () => {
+        sessionStorage.setItem("room", JSON.stringify(roomname));
+        navigate("/waiting_room", { replace: true });
+      });
     } catch (err: any) {
       console.log(err.message);
       return;
     }
   };
+
   return (
     <div className="mx-auto w-[400px] md:w-[480px] mt-8 flex flex-col gap-8">
       <div className="">
@@ -68,15 +75,12 @@ function RoomCreationPage() {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        <Button
-          onClick={() => handleCreateBtn({ username: "A" })}
-          className="shadow-xl"
-        >
+        <Button onClick={() => handleCreateBtn()} className="shadow-xl">
           Create a Room
         </Button>
         <JoinDialog
           setRoomName={setRoomName}
-          handleClick={() => handleJoinDialog({ room_name })}
+          handleClick={() => handleJoinDialog(room_name)}
         />
       </div>
     </div>

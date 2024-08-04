@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 axios.defaults.baseURL = "http://localhost:5000";
 
 const formSchema = z.object({
-  email: z.string().min(2, {
+  username: z.string().min(2, {
     message: "Email must be at least 2 characters.",
   }),
   password: z.string().min(3, {
@@ -63,7 +63,7 @@ function LoginFormControls() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -71,11 +71,12 @@ function LoginFormControls() {
   async function onSubmit(formData: z.infer<typeof formSchema>) {
     try {
       const result = await axios.post("/login", {
-        email: formData.email,
+        username: formData.username,
         password: formData.password,
       });
       if (result.data.token) {
-        localStorage.setItem("auth_token", result.data.token);
+        sessionStorage.setItem("auth_token", result.data.token);
+        sessionStorage.setItem("username", formData.username);
         axios.defaults.headers.common["Authorization"] =
           "Bearer " + result.data.token;
 
@@ -97,12 +98,12 @@ function LoginFormControls() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="john_smith123@gmail.com" {...field} />
+                <Input placeholder="john_smith123" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -1,25 +1,31 @@
+import QuickQuickForm from "@/components/customised/dialogs/QuickQuizForm";
 import { socket } from "@/socket";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function WaitingRoomPage() {
+function AdminWaitingRoomPage() {
   const navigate = useNavigate();
-  const [room_name, setRoomName] = useState<any>(() => {
-    const room: any = sessionStorage.getItem("room");
-    return JSON.parse(room).toUpperCase();
-  });
-
+  const [room_name, setRoomName] = useState<any>("");
   const [message, setMessage] = useState(
     "No instructions available for this quiz."
   );
-
   const [waiting_users, setWaitingUsers] = useState<any>([]);
 
-  const handleExitBtn = (room_name: any) => {
-    socket.emit("exit_room", room_name);
+  const handleQuickQuizBtn = async (quiz: any) => {
+    // This runs when the user clicks the start btn
+    // after setting the quiz. i.e. in the
+    // submit function of QuickQuizForm component
+    socket.emit("start_quiz", room_name, quiz);
+  };
+
+  const handleDeleteBtn = () => {
+    socket.emit("delete", room_name);
   };
 
   useEffect(() => {
+    const username = sessionStorage.getItem("username");
+    setRoomName(username);
+    const id = setInterval(() => socket.emit("get_all_users", username), 3000);
     socket.on("users", (list) => {
       setWaitingUsers(list);
     });
@@ -27,18 +33,11 @@ function WaitingRoomPage() {
       navigate("/room_creation", { replace: true });
     });
     socket.on("delete", () => socket.emit("exit_room", room_name));
-
-    socket.on("start_quiz", (quiz) => {
-      console.log("STart Quix", quiz);
-      navigate("/quiz_room", {
-        state: { data: quiz },
-        replace: true,
-      });
-    });
     return () => {
       socket.off("users");
       socket.off("goto_room_creation");
       socket.off("delete");
+      clearInterval(id);
     };
   }, []);
 
@@ -46,7 +45,7 @@ function WaitingRoomPage() {
     <div className="mx-auto flex items-center h-[90%]">
       <div className="border-r p-[20px] gap-[10px] flex flex-col">
         <h1 className="md:text-[16px] w-[180px] md:w-[232px] px-1 text-[#797e8b]">
-          {room_name}'s Waiting Room
+          {room_name?.toUpperCase()}'s Waiting Room
         </h1>
         <div className="flex flex-col gap-2">
           {!waiting_users
@@ -60,10 +59,10 @@ function WaitingRoomPage() {
               })}
         </div>
         <button
-          onClick={() => handleExitBtn(room_name.toLowerCase())}
+          onClick={handleDeleteBtn}
           className="rounded bg-[#565966] text-white p-2 md:font-semibold"
         >
-          Exit Room
+          Delete Room
         </button>
       </div>
       <div className="max-w-[928px] p-[40px] flex flex-col gap-8">
@@ -75,9 +74,13 @@ function WaitingRoomPage() {
             {message}
           </p>
         </div>
+        <QuickQuickForm
+          onClick={(quiz) => handleQuickQuizBtn(quiz)}
+          className="w-fit px-24 shadow-xl"
+        />
       </div>
     </div>
   );
 }
-
-export default WaitingRoomPage;
+// className="text-[16px] w-[232px] rounded hover:shadow-xl"
+export default AdminWaitingRoomPage;

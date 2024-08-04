@@ -63,9 +63,12 @@ export default function QuizList({ quizList, time }: QuizListProps) {
     correct_answers.current = quizList.map(
       (quizItem) => quizItem.correct_answer
     );
+
+    console.log(correct_answers.current);
   }, [quizList]);
 
   function onSubmit(data: any) {
+    console.log(data);
     setDisabledBtn(true);
     stopTimer();
     navigate("/display_score", {

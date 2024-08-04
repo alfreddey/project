@@ -3,13 +3,13 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   async login(req, res) {
     try {
-      const { email, password } = req.body;
+      const { username, password } = req.body;
 
-      if (!email || !password) {
+      if (!username || !password) {
         return res.status(400).json({ err: "No user info received." });
       }
 
-      const db_user = await UserModel.findOne({ email });
+      const db_user = await UserModel.findOne({ username });
 
       if (!db_user) {
         return res.status(400).json({ err: "User does not exist." });
@@ -18,11 +18,11 @@ module.exports = {
       const authenticated = await db_user.comparePassword(password);
 
       if (!authenticated) {
-        return res.status(400).json({ err: "Wrong password or email" });
+        return res.status(400).json({ err: "Wrong password or username" });
       }
 
       const token = jwt.sign(
-        { email: db_user.email, id: db_user._id },
+        { username: db_user.username, id: db_user._id },
         process.env.TOKEN_SECRET_KEY,
         { expiresIn: 24 * 60 * 60 }
       );
@@ -38,7 +38,7 @@ module.exports = {
     try {
       const formData = req.body;
 
-      if (!formData || !formData.password || !formData.email) {
+      if (!formData || !formData.password || !formData.username) {
         res.json({
           err: "Received no user info",
         });
@@ -48,7 +48,7 @@ module.exports = {
 
       if (user) {
         const token = jwt.sign(
-          { email: user.email, id: user._id },
+          { username: user.username, id: user._id },
           process.env.TOKEN_SECRET_KEY,
           { expiresIn: 24 * 60 * 60 }
         );
